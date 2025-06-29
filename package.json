@@ -1,0 +1,20 @@
+{
+  "name": "node-decorator-lite",
+  "version": "1.0.0",
+  "description": "Lightweight decorator-like framework for plain Node.js and Express.",
+  "main": "index.js",
+  "keywords": [
+    "decorator",
+    "express",
+    "nodejs",
+    "middleware",
+    "controller",
+    "metadata"
+  ],
+  "author": "Mukesh Singh Bisht",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/node-decorator-lite"
+  }
+}
