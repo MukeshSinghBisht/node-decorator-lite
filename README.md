@@ -1,16 +1,19 @@
 # node-decorator-lite
 
-> Lightweight decorator-like framework for Express in plain JavaScript using metadata and middleware.
+> Lightweight decorator-like framework for Express in plain JavaScript using metadata and middleware. Add `@Log`, `@Roles`, or any custom decorators without TypeScript or transpilers.
 
-## ✨ Features
+---
 
-- Generic metadata decorators for methods
-- Run decorator logic via middleware (`controllerHandler`)
-- Create your own decorators like:
+## 🚀 Features
+
+- Zero-dependency
+- Supports metadata-based decorators like:
   - `@Log()`
   - `@Roles('admin')`
-  - `@Throttle()`
-- Works without TypeScript or transpilers
+  - `@Throttle(10)`
+- Works in plain JavaScript (no TypeScript)
+- Plug-and-play with Express route handlers
+- Easily extensible for any use case
 
 ---
 
@@ -20,80 +23,60 @@
 npm install node-decorator-lite
 
 
-🔧 Usage
-1. Import it
-js
-Copy
-Edit
+🔧 Basic Usage
+const express = require('express');
 const {
   createDecorator,
   createHandler,
 } = require('node-decorator-lite');
-2. Create decorators
-js
-Copy
-Edit
+
+const app = express();
+
+// Define decorators
 const Log = () => createDecorator('log', true);
 const Roles = (...roles) => createDecorator('roles', roles);
-3. Define handler logic
-js
-Copy
-Edit
+
+// Setup middleware logic
 const handler = createHandler({
-  log: (_val, req) => {
-    console.log(`[LOG] ${req.method} ${req.path}`);
+  log: (_value, req) => {
+    console.log(`[LOG] ${req.method} ${req.url}`);
   },
   roles: (allowed, req, res) => {
-    const role = req.headers['x-role'];
-    if (!allowed.includes(role)) {
+    const userRole = req.headers['x-role'];
+    if (!allowed.includes(userRole)) {
       res.status(403).send('Forbidden');
-      return false;
+      return false; // stop execution
     }
   },
 });
-4. Create controller
-js
-Copy
-Edit
+
+// Example controller
 class UserController {
   constructor() {
     Log()(this, 'getUser');
-    Roles('admin')(this, 'getUser');
+    Roles('admin', 'manager')(this, 'getUser');
   }
 
   getUser(req, res) {
-    res.send('Welcome user!');
+    res.send(`Hello, ${req.headers['x-role']}`);
   }
 }
-5. Use with Express
-js
-Copy
-Edit
-const express = require('express');
-const app = express();
-const userCtrl = new UserController();
 
+const userCtrl = new UserController();
 app.get('/user', handler(userCtrl, 'getUser'));
 
-app.listen(3000, () => console.log('Running on http://localhost:3000'));
-✅ Output
-bash
-Copy
-Edit
-curl -H "x-role: admin" http://localhost:3000/user
-# -> Welcome user!
-
-curl -H "x-role: guest" http://localhost:3000/user
-# -> Forbidden
-🛠️ Build Your Own Decorators
-js
-Copy
-Edit
-const Throttle = (limit) => createDecorator('throttle', limit);
-
-// Add in handler rules
-createHandler({
-  throttle: (limit, req, res) => {
-    // Your logic here
-  }
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
 });
+
+📁 Full Example
+A complete working app is available in the example/ folder.
+
+Run it locally with:
+node example/app.js
+
+Test using:
+curl -H "x-role: admin" http://localhost:3000/user
+curl -H "x-role: guest" http://localhost:3000/user
+
+
