@@ -27,5 +27,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/MukeshSinghBisht/node-decorator-lite.git"
+  },
+  "homepage": "https://github.com/MukeshSinghBisht/node-decorator-lite#readme",
+  "bugs": {
+    "url": "https://github.com/MukeshSinghBisht/node-decorator-lite/issues"
   }
 }
